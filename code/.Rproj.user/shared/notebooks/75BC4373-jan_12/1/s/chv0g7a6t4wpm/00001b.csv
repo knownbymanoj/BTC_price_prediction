@@ -1,0 +1,2 @@
+"0","# Plot the seasonality, trend, and remainder components"
+"0","plot(seasonality, main = ""Seasonality"")"

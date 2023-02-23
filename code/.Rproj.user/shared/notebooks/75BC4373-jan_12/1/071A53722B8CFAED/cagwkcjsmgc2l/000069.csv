@@ -1,0 +1,3 @@
+"0",""
+"0","x <- 1:10"
+"0","plot(x, ts_data_test[1:10], col=""blue"",type ='b', xlab = 'Day',ylab=""BTC price"", pch=16, lty=3,cex=0.6)"

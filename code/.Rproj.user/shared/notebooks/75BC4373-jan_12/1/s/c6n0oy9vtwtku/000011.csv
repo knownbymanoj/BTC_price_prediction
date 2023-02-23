@@ -1,0 +1,1 @@
+"0","axis(1, at = seq(1,length(subset1),by=20), labels=btc$Date[seq(1001,(1000+length(subset1)),by=20)])"

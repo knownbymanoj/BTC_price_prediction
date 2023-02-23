@@ -1,0 +1,2 @@
+"0","plot(tail(MACD, 100), type=""l"","
+"0","    main=""MACD AND MOVING AVGS."", ylab="""")"

@@ -1,0 +1,2 @@
+"0","axis(1, at = seq(1,length(final_df$Price[700:975]),by=35), "
+"0","labels=final_df$Date[seq(700,(799+length(subset1)),by=35)])"

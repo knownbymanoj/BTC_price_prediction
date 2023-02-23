@@ -1,0 +1,34 @@
+"0","library(tseries)"
+"2","
+    ‘tseries’ version: 0.10-52
+
+    ‘tseries’ is a package for time series analysis and computational
+    finance.
+
+    See ‘library(help=""tseries"")’ for details.
+
+"
+"0","adf.test(ts_data)"
+"1","
+"
+"1","	Augmented Dickey-Fuller Test"
+"1","
+"
+"1","
+"
+"1","data:  "
+"1",""
+"1","ts_data"
+"1",""
+"1","
+"
+"1","Dickey-Fuller = -1.5127, Lag order = 10, p-value = 0.7846"
+"1","
+"
+"1","alternative hypothesis: "
+"1","stationary"
+"1",""
+"1","
+"
+"1","
+"

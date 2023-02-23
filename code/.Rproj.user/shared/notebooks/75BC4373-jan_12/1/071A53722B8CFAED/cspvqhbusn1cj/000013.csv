@@ -1,0 +1,2 @@
+"0","final_df = data.frame(dat,btc.xts$Open,btc.xts$High,btc.xts$Low,btc.xts$Close,btc.xts$Adjusted,btc.xts$Volume,rsi,StoFASTK,StoFASTD,StoSLOWK,adx,roc,obv,mfi,ad,MA50,MA200,MACD,MACDSignal,EPU,EMU,Tenyrbond,ThreemTbill,OVX,VIX,Fiveyrinfexp,be_inflation,EMV_IDT)"
+"0","head(final_df)"

@@ -1,0 +1,7 @@
+"0","# cumulative predictions"
+"0","pred_GMBr2btc<- predict(GMBr2btc, newx = 1:275)"
+"0",""
+"0","# instantaneous predictions"
+"0","pred_GMBr2btc.inst <- make.instantaneous(pred_GMBr2btc)"
+"0",""
+"0","plot(pred_GMBr2btc.inst, col=2, xaxt=""n"", ylim = c(0,70000),pch=16, lty=3, cex=0.6, xlab=""Date"", ylab = ""Price"")"

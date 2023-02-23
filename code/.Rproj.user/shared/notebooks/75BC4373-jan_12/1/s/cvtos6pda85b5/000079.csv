@@ -1,0 +1,2 @@
+"0","# Add a legend to the plot"
+"0","legend(""topright"", legend = c(""BM"", ""GGM""), col = c(""red"", ""green""), lty = 1, lwd = 2)"

@@ -1,0 +1,3 @@
+"0","# plotting time-series object "
+"0","#ts.plot(btc.price.ts, type=""l"", col=""red"")"
+"0","ts.plot(ts_data_train, col=""black"",xlab= ""Week"",ylab='Price')"

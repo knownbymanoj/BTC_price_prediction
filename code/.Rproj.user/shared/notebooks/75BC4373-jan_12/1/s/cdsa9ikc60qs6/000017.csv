@@ -1,0 +1,5 @@
+"0","##Finding the residuals"
+"0","res.trend<- residuals(fit.t)"
+"0",""
+"0","#Plotting the residuals"
+"0","plot(res.trend,xlab=""Time"", ylab=""residuals"", col=2 )"

@@ -1,0 +1,3 @@
+"0",""
+"0","# seeing auto-correlation of residuals"
+"0","acf(res_GMBr2btc, plot=T)"

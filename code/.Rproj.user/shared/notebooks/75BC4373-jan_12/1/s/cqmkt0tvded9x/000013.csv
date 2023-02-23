@@ -1,0 +1,2 @@
+"0","# applying bass model"
+"0","bm_prices <- BM(subset1, display=T)"

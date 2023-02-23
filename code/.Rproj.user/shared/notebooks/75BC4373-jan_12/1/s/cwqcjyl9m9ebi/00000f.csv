@@ -1,0 +1,2 @@
+"0","btc <- subset(btc, btc$Weekday!=6 & btc$Weekday!=7)"
+"0","eth <- subset(eth, eth$Day!=""Sat"" & eth$Day!=""Sun"")"

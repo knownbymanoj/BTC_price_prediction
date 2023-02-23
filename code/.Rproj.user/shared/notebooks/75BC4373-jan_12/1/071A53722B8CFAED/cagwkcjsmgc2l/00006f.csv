@@ -1,0 +1,5 @@
+"0",""
+"0","#plot(ts_data_train, col=""red"",type ='l', xlab = 'Day',ylab=""BTC price"", pch=16, lty=3,cex=0.6)"
+"0",""
+"0",""
+"0","#plot(predictions)"

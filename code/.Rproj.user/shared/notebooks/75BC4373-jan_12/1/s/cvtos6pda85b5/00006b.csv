@@ -1,0 +1,1 @@
+"0","plot(final_df$Price[700:975], type=""b"", ylim = c(0,70000), xlab=""Day"", ylab=""BTC price"", pch=16, lty=3, xaxt=""n"", cex=0.6)"

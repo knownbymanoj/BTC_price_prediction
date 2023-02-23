@@ -1,0 +1,337 @@
+######## 'Movies' Dataset- preliminary analysis
+
+data <- read.csv("C://Users/manoj/Downloads/movies.csv", stringsAsFactors=TRUE)
+str(data)
+#erase columns of indicator variables
+data<-data[,-c(1,2)]
+
+#transform variable release_date in format "data"
+data$release_date <- as.Date(data$release_date, "%d/%m/%Y")
+
+str(data)
+
+# Response variable
+summary(data$vote_average)
+boxplot(data$vote_average, col="orange", ylim=c(0,10), main="Movies", ylab="Rating")
+#
+hist(data$vote_average, col="orange", main="Movies", xlab="Rating")
+#
+#explanatory variables
+summary(data)
+
+
+summary(data[,c(1,2,5,6)])
+par(mfrow=c(2,2))
+for(i in c(1,2,5,6)){
+  hist(data[,i], col="orange", main=paste(colnames(data)[i]), xlab="")
+}
+
+#transform quantitative variables in log scale
+data$budget <- log(data$budget)
+data$popularity <- log(data$popularity)
+data$revenue <- log(data$revenue)
+
+summary(data[,c(1,2,5,6)])
+
+par(mfrow=c(2,2))
+for(i in c(1,2,5,6)){
+  hist(data[,i], col="orange", main=paste(colnames(data)[i]), xlab="")
+}
+#go back to orginal panel 
+par(mfrow=c(1,1))
+
+#transform release_date in numeric 
+data$release_date<-as.numeric(data$release_date)
+summary(data$release_date)
+
+# Set train and test
+set.seed(1)
+train = sample (1:nrow(data), 0.7*nrow(data))
+data.train=data[train ,]
+data.test=data[-train ,]
+
+# make some variables factor
+data.train[,c(3,7, 10:24)]= lapply(data.train[,c(3,7, 10:24)],factor)
+data.test[,c(3,7, 10:24)]= lapply(data.test[,c(3,7, 10:24)],factor)
+
+str(data.train)
+
+
+##########################
+####Linear Model#########
+#########################
+
+
+m1 <- lm(vote_average~.-vote_classes, data=data.train)
+
+summary(m1)
+
+###############################
+###### Stepwise Regression#####
+
+m2 <- step(m1, direction="both")
+summary(m2)
+
+
+
+#Prediction
+p.lm <- predict(m2, newdata=data.test)
+dev.lm <- sum((p.lm-data.test$vote_average)^2)
+dev.lm
+
+AIC(m2)
+
+#################################
+######################GAM--------
+
+library(gam)
+
+###################
+##Stepwise GAM
+#Start with a linear model (df=1)
+g3 <- gam(vote_average~.-vote_classes, data=data.train)
+
+#Show the linear effects 
+par(mfrow=c(3,5))
+plot(g3, se=T) 
+
+#Perform stepwise selection using gam scope
+#Values for df should be greater than 1, with df=1 implying a linear fit
+
+sc = gam.scope(data.train[,-8], response=8, arg=c("df=2","df=3","df=4"))
+g4<- step.Gam(g3, scope=sc, trace=T)
+summary(g4)
+
+AIC(g4)
+
+par(mfrow=c(3,4))
+plot(g4, se=T)
+
+# if we want to see better some plot (1, 2)
+par(mfrow=c(1,1))
+plot(g4, se=T, ask=T)
+
+
+#Prediction
+
+# make some variables factor
+data.test[,c(3,7, 10:24)]= lapply(data.test[,c(3,7, 10:24)],factor)
+p.gam <- predict(g4,newdata=data.test)     
+dev.gam <- sum((p.gam-data.test$vote_average)^2)
+dev.gam
+
+
+################################
+###### CART #######
+################################
+library(tree)
+
+#
+set.seed(123)
+cb1 <- sample(1:NROW(data.train),1500)
+cb2 <- setdiff(1:NROW(data.train),cb1)
+
+#splitting
+t1a <- tree(vote_average~.-vote_classes, data=data.train[cb1,], control=tree.control(nobs=length(cb1), minsize=2, mindev=0))
+
+plot(t1a)
+text(t1a, cex=0.5)
+
+#pruning
+t1b <- prune.tree(t1a, newdata=data.train[cb2,])
+plot(t1b)
+#zoom
+plot(t1b, xlim=c(0,50))
+
+J <- t1b$size[which.min(t1b$dev)]
+
+t1c <- prune.tree(t1a, best=J)
+
+plot(t1c)
+text(t1c)
+
+plot(t1c)
+text(t1c, pretty=4, cex=0.7)
+
+#
+#Prediction
+
+# make some variables factor
+p.tree <- predict(t1c,newdata=data.test)     
+dev.tree <- sum((p.tree-data.test$vote_average)^2)
+dev.tree
+
+
+################################
+###### Gradient Boosting #######
+################################
+
+
+install.packages("gbm")
+library (gbm)
+
+?gbm
+
+# 1 Boosting- 
+boost.movies=gbm(vote_average ~ .-vote_classes, data=data.train, 
+                 distribution="gaussian", n.trees=5000, interaction.depth=1)
+#
+#for the plot
+par(mfrow=c(1,1))
+#
+#plot of training error
+plot(boost.movies$train.error, type="l", ylab="training error")
+
+#always decreasing with increasing number of trees
+#
+#
+#relative influence plot
+summary(boost.movies) 
+#let us modify the graphical parameters to obtain a better plot
+#
+#more space on the left
+#
+# default vector of parameters
+mai.old<-par()$mai
+mai.old
+#new vector
+mai.new<-mai.old
+#new space on the left
+mai.new[2] <- 2.5 
+mai.new
+#modify graphical parameters
+par(mai=mai.new)
+summary(boost.movies, las=1) 
+#las=1 horizontal names on y
+summary(boost.movies, las=1, cBar=10) 
+#cBar defines how many variables
+#back to orginal window
+par(mai=mai.old)
+
+
+
+# test set prediction for every tree (1:5000)
+
+
+yhat.boost=predict(boost.movies, newdata=data.test, n.trees=1:5000)
+
+# calculate the error for each iteration
+#use 'apply' to perform a 'cycle for' 
+# the first element is the matrix we want to use, 2 means 'by column', 
+#and the third element indicates the function we want to calculate
+
+err = apply(yhat.boost, 2, function(pred) mean((data.test$vote_average - pred)^2))
+#
+plot(err, type="l")
+
+# error comparison (train e test)
+plot(boost.movies$train.error, type="l")
+lines(err, type="l", col=2)
+#minimum error in test set
+best=which.min(err)
+abline(v=best, lty=2, col=4)
+#
+min(err) #minimum error
+
+
+# 2 Boosting - Deeper trees
+boost.movies=gbm(vote_average ~ .-vote_classes, data=data.train, 
+                 distribution="gaussian", n.trees=5000, interaction.depth=4)
+
+plot(boost.movies$train.error, type="l")
+
+#par(mai=mai.new)
+
+summary(boost.movies, las=1, cBar=10)  
+
+#par(mai=mai.old)
+
+yhat.boost=predict(boost.movies ,newdata=data.test,n.trees=1:5000)
+err = apply(yhat.boost,2,function(pred) mean((data.test$vote_average-pred)^2))
+plot(err, type="l")
+
+
+plot(boost.movies$train.error, type="l")
+lines(err, type="l", col=2)
+best=which.min(err)
+abline(v=best, lty=2, col=4)
+min(err)
+
+
+# 3 Boosting - Smaller learning rate 
+
+boost.movies=gbm(vote_average ~ .-vote_classes, data=data.train, 
+                 distribution="gaussian", n.trees=5000, interaction.depth=1, shrinkage=0.01)
+plot(boost.movies$train.error, type="l")
+
+par(mai=mai.new)
+
+summary(boost.movies, las=1, cBar=10) 
+par(mai=mai.old)
+
+yhat.boost=predict(boost.movies ,newdata=data.test,n.trees=1:5000)
+err = apply(yhat.boost,2,function(pred) mean((data.test$vote_average-pred)^2))
+plot(err, type="l")
+
+
+plot(boost.movies$train.error, type="l")
+lines(err, type="l", col=2)
+best=which.min(err)
+abline(v=best, lty=2, col=4)
+min(err)
+
+
+# 4 Boosting - combination of previous models
+boost.movies=gbm(vote_average ~ .-vote_classes ,data=data.train, 
+                 distribution="gaussian",n.trees=5000, interaction.depth=4, shrinkage=0.01)
+
+plot(boost.movies$train.error, type="l")
+#
+
+par(mai=mai.new)
+
+summary(boost.movies, las=1, cBar=10) 
+
+par(mai=mai.old)
+
+yhat.boost=predict(boost.movies ,newdata=data.test,n.trees=1:5000)
+err = apply(yhat.boost, 2, function(pred) mean((data.test$vote_average-pred)^2))
+plot(err, type="l")
+
+
+plot(boost.movies$train.error, type="l")
+lines(err, type="l", col=2)
+best=which.min(err)
+abline(v=best, lty=2, col=4)
+err.boost= min(err)
+
+
+##Comparison of models in terms of residual deviance
+dev.gbm<- (sum((yhat.boost[,best]-data.test$vote_average)^2))
+dev.gbm
+dev.tree
+dev.gam
+dev.lm
+
+
+
+boost.movies
+# partial dependence plots
+plot(boost.movies, i.var=1, n.trees = best)
+plot(boost.movies, i.var=2, n.trees = best)
+plot(boost.movies, i.var=5, n.trees = best)
+plot(boost.movies, i.var=c(1,5), n.trees = best) #bivariate (library(viridis) may be necessary)
+#
+plot(boost.movies, i.var=3, n.trees = best) # categorical
+plot(boost.movies, i.var=6, n.trees = best)
+
+plot(boost.movies, i=23, n.trees = best)# categorical
+plot(boost.movies, i=17, n.trees = best) #no effect
+
+
+
+
+
+
+
+

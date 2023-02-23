@@ -1,0 +1,2 @@
+"0","Tenyrbond <- read_csv(""C://Users/manoj/Desktop/BEFD_Project_Images/Tenyrbond.csv"",show_col_types = FALSE)$THREEFY10"
+"0","ThreemTbill <- read_csv(""C://Users/manoj/Desktop/BEFD_Project_Images/ThreemTbill.csv"",show_col_types = FALSE)$DTB3"

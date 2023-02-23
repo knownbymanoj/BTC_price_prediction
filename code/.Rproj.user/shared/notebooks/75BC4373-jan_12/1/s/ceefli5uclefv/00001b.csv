@@ -1,0 +1,1 @@
+"0","lines(final_df$Price[700:975], type=""b"", xlab=""Day"", ylab=""BTC price"", pch=16, lty=3, cex=0.6)"

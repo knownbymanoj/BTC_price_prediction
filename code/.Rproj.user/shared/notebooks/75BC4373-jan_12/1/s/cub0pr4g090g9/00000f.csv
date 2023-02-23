@@ -1,0 +1,5 @@
+"0","# Bass Model ----"
+"0","subset1 <- final_df$Price[700:875]"
+"0",""
+"0","## visualizing cumulative sum for the bass model"
+"0","plot(cumsum(subset1), type=""b"")"

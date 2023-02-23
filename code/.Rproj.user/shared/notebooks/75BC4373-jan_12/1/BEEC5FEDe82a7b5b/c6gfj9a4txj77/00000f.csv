@@ -1,0 +1,5 @@
+"0","btc.xts <- subset(btc.xts, btc.xts$Weekday!=6 & btc.xts$Weekday!=7)"
+"0",""
+"0","#man.xts <- subset(btc.xts$Adjusted, man.xts$Weekday!=6 & btc.xts$Weekday!=7)"
+"0",""
+"0","#n.xts <- man.xts[,2]"

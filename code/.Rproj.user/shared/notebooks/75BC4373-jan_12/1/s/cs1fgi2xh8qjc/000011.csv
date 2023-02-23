@@ -1,0 +1,3 @@
+"0","tt <- 1:NROW(final_df$Price)"
+"0","plot(tt, final_df$Price, xlab=""time"", ylab=""BTC Price"", main=""Distribution of btc prices over time"", col=1, type=""b"", lty=1, pch=5, cex=0.6)"
+"0",""

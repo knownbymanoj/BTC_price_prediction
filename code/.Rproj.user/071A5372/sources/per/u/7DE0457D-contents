@@ -1,0 +1,180 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Remove Redundant Features
+
+```{r}
+# ensure the results are repeatable
+set.seed(123)
+# load the library
+library(mlbench)
+library(caret)
+```
+```{r}
+
+# calculate correlation matrix
+correlationMatrix <- cor(new_df[,2:28])
+# summarize the correlation matrix
+print(correlationMatrix)
+
+```
+```{r}
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# print indexes of highly correlated attributes
+print(colnames(new_df)[highlyCorrelated + 1])
+```
+```{r}
+# prepare training scheme
+control <- trainControl(method="LOOCV", number=10, repeats=3)
+# train the model
+model <- train(Adjusted~., data=new_df[,2:28], method="lvq", preProcess="scale", trControl=control)
+
+```
+```{r}
+model = 
+# estimate variable importance
+importance <- varImp(model, scale=FALSE)
+# summarize importance
+print(importance)
+# plot importance
+plot(importance)
+```
+
+
+Gradient boosting for feature selection
+```{r}
+library(gbm)
+library(caret)
+library(randomForest)
+```
+
+```{r}
+# Split the dataset into training and test sets
+set.seed(123)
+train_index <- sample(1:nrow(new_df), 0.8 * nrow(new_df))
+train <- new_df[train_index, ]
+test <- new_df[-train_index, ]
+
+```
+
+```{r}
+# Fit a gradient boosting model to the training data
+
+
+model2 <- randomForest(formula = Adjusted ~ ., data = new_df[,2:28],ntree= 500)
+
+```
+
+The number of variables selected at each split is denoted by mtry in randomforest function.
+Find the optimal mtry value
+```{r}
+mtry <- tuneRF(new_df[c(-1,-6)],new_df$Adjusted, ntreeTry=500,stepFactor=1.5,improve=0.01, trace=TRUE, plot=TRUE)
+
+best.m <- mtry[mtry[, 2] == min(mtry[, 2]), 1]
+print(mtry)
+print(best.m)
+```
+Build model again using best mtry value.
+```{r}
+rf <-randomForest(Adjusted~.,data=new_df[,2:28], mtry=best.m, importance=TRUE,ntree=500)
+print(rf)
+#Evaluate variable importance
+importance(rf)
+varImpPlot(rf)
+```
+
+```{r}
+print(importance(model2))
+sorted_importances = sort(importance(model2),decreasing=TRUE)
+```
+
+```{r}
+# Calculate the feature importances
+importances <- varImp(model,numTrees=5000, scale = TRUE)
+
+# Sort the importances in descending order
+sorted_importances <- sort(importances$Overall, decreasing = TRUE)
+
+# Print the most important features
+print(names(sorted_importances)[1:10])
+```
+
+
+
+
+
+
+Gradient boosting model
+```{r}
+# Set train and test
+set.seed(1)
+train = sample (1:nrow(new_df1), 0.7*nrow(new_df1))
+data.train=new_df1[train ,]
+data.test=new_df1[-train ,]
+```
+
+```{r}
+library(gbm)
+
+boost.model=gbm(Adjusted ~ . ,data=data.train[,2:23], 
+                 distribution="gaussian",n.trees=5000, interaction.depth=4, shrinkage=0.01)
+#for the plot
+par(mfrow=c(1,1))
+
+plot(boost.model$train.error, type="l")
+
+```
+```{r}
+
+# default vector of parameters
+mai.old<-par()$mai
+mai.old
+#new vector
+mai.new<-mai.old
+#new space on the left
+mai.new[2] <- 2.5 
+mai.new
+#modify graphical parameters
+par(mai=mai.new)
+
+#relative influence plot
+summary(boost.model, las=1, cBar=10) 
+#cBar defines how many variables
+#back to orginal window
+par(mai=mai.old)
+
+```
+```{r}
+# test set prediction for every tree (1:5000)
+
+
+yhat.boost=predict(boost.model, newdata=data.test[2:23], n.trees=1:5000)
+
+# calculate the error for each iteration
+#use 'apply' to perform a 'cycle for' 
+# the first element is the matrix we want to use, 2 means 'by column', 
+#and the third element indicates the function we want to calculate
+
+err = apply(yhat.boost, 2, function(pred) mean((data.test$Adjusted - pred)^2))
+#
+plot(err, type="l")
+```
+```{r}
+# error comparison (train e test)
+plot(boost.model$train.error, type="l")
+lines(err, type="l", col=2)
+#minimum error in test set
+best=which.min(err)
+abline(v=best, lty=2, col=4)
+#
+min(err) #minimum error
+```
+```{r}
+##gbm in terms of residual deviance
+dev.gbm<- (sum((yhat.boost[,best]-data.test$Adjusted)^2))
+```
+
+

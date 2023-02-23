@@ -1,0 +1,3 @@
+"0","for_date <- function(x){"
+"0","  return(as.Date(as.POSIXct(strptime(x,""%d/%m/%Y""))))"
+"0","}"

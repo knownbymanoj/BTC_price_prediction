@@ -1,0 +1,2 @@
+"0","btc.xts <- xts(btc[1:1795,2:8],order.by=mod_date$Date)"
+"0","man.xts <- xts(btc[1:1795,c(2,7)],order.by=mod_date$Date)"

@@ -1,0 +1,3 @@
+"0","btc <- read_csv(""M://Crypto_Analysis/BTC-USD.csv"", show_col_types = FALSE)"
+"0","eth <- read_csv(""M://Crypto_Analysis/ETH-USD.csv"", show_col_types = FALSE)"
+"0",""

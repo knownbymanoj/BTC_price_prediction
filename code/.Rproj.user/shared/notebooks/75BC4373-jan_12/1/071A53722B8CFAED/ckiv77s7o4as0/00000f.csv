@@ -1,0 +1,2 @@
+"0","OVX['.' == OVX] = round(mean(as.numeric(OVX[-which('.' == OVX)])),2)"
+"0","VIX['.' == VIX] = round(mean(as.numeric(VIX[-which('.' == VIX)])),2)"

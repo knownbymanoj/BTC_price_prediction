@@ -1,0 +1,9 @@
+"0","Fiveyrinfexp <- read_csv(""C://Users/manoj/Desktop/BEFD_Project_Images/Fiveyrinfexp.csv"",show_col_types = FALSE)"
+"0","dat=Fiveyrinfexp$Date"
+"0","Fiveyrinfexp <- Fiveyrinfexp$T5YIE"
+"0","be_inflation <- read_csv(""C://Users/manoj/Desktop/BEFD_Project_Images/be_inflation.csv"",show_col_types = FALSE)$T10YIE"
+"0","EMV_IDT <- read_csv(""C://Users/manoj/Desktop/BEFD_Project_Images/EMV_IDT.csv"",show_col_types = FALSE)"
+"2","Warning: [38;5;232mOne or more parsing issues, call `problems()` on your data frame for
+details, e.g.:
+  dat <- vroom(...)
+  problems(dat)[39m"

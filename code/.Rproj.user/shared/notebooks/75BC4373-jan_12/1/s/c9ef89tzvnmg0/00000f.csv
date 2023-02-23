@@ -1,0 +1,8 @@
+"0","######GGM "
+"0",""
+"0","subset1 <- final_df$Price[700:875]"
+"0",""
+"0","GGM_btc<- GGM(final_df$Price[700:875], prelimestimates=c(8.509346e+06, 0.001, 0.01, 1.067089e-03, 2.428048e-02))"
+"2","Warning: NaNs produced"
+"2","Warning: NaNs produced"
+"2","Warning: NaNs produced"

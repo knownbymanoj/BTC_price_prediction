@@ -1,0 +1,2 @@
+"0",""
+"0","plot(subset1, type=""b"", xlab=""Day"", ylab=""BTC price"", pch=16, xaxt=""n"", lty=3, cex=0.6)"

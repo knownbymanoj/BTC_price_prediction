@@ -1,0 +1,3 @@
+"0","#(m, p, q are from Bass Model because they can be reasonable starting points)"
+"0","# rectangular shock (a1 - begin of shock, b1 - end of shock, c1 - intensity of shock(a1 < b1, c1 can be +ve or -ve))"
+"0","GMBr2btc <- GBM(subset1, shock = ""rett"", nshock = 3, prelimestimates = c(8.509346e+06	, 1.067089e-03, 2.428048e-02,60,75,0.3, 85, 100,-0.3,110, 130,-0.4))"

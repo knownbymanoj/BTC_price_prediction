@@ -1,0 +1,2 @@
+"0","Tenyrbond['.' == Tenyrbond] = round(mean(as.numeric(Tenyrbond[-which('.' == Tenyrbond)])),4)"
+"0","ThreemTbill['.' == ThreemTbill] = round(mean(as.numeric(ThreemTbill[-which('.' == ThreemTbill)])),4)"

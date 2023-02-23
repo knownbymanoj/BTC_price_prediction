@@ -1,0 +1,2 @@
+"0","final_df = new_df1[,c(1,2,3,7,9,11,12,14,17,18,19,22)]"
+"0","write.csv(final_df,""C://Users/manoj/Desktop/BEFD_Project_Images/df.csv"")"

@@ -1,0 +1,5 @@
+"0","# Set train and test"
+"0","set.seed(1)"
+"0","train = sample (1:nrow(final_df), 0.7*nrow(final_df))"
+"0","final_df.train=final_df[train ,]"
+"0","final_df.test=final_df[-train ,]"

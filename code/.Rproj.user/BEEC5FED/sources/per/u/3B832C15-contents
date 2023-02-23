@@ -1,0 +1,350 @@
+##################################
+#Local regression, Loess, Splines
+##################################
+##################################
+library(readr)
+
+auto <- read.csv("C://Users/manoj/Downloads/auto-us (1).csv")
+str(auto)
+#-----analysis of variable engine.size--------------
+y <- auto$city.mpg
+x <- auto$engine.size
+
+# we create a preliminary plot
+plot(x,y,xlab="engine size", ylab="distance")
+
+
+#Local regression
+install.packages("sm")
+install.packages("gam")
+
+library(sm)
+plot(x,y)
+sm.regression(x, y,   h = 10, add = T)
+
+#increase the number of points where the function is calculated
+sm.regression(x, y,   h = 10, add = T, ngrid=200, col=2)
+
+
+
+#We try with different values for h
+#increasing the value of h we have a smoother function, a lower value of h implies a jumpy function
+
+sm.regression(x, y,   h = 30, ngrid=200, col=1)
+sm.regression(x, y,   h = 50, add = T, ngrid=200, col=2)
+sm.regression(x, y,   h = 5,  add = T, ngrid=200, col=3)
+sm.regression(x, y,   h = 1,  add = T, col=3, ngrid=200)
+
+
+#We add variability bands
+sm.regression(x, y,   h = 30, ngrid=200, display="se")
+
+
+#We add variability bands
+sm.regression(x, y,   h = 30, ngrid=200, display="se")
+
+#########
+#Loess (no library required, default tool of R)
+plot(x, y, xlab="engine size", ylab="distance")
+lo1 <- loess.smooth(x,y) 
+#default span= 0.75
+lines(lo1)
+# we try with other smoothing parameters 'span' 
+lo2 <- loess.smooth(x,y,span=0.9)
+lines(lo2,col=2)
+lo3 <- loess.smooth(x,y,span=0.4)
+lines(lo3,col=3)
+
+
+#another way to perform loess, performs directly the plot
+#default span= 2/3
+
+scatter.smooth(x,y) 
+scatter.smooth(x,y, span=0.3)
+scatter.smooth(x,y, span=0.3, evaluation=200)
+
+#######Regression splines (cubic splines)
+install.packages("splines")
+library(splines)
+#
+plot(x, y, xlab="engine size", ylab="distance")
+#
+#we select and identify the knots 'equispaced'
+xi<-seq(min(x), max(x), length=4)
+
+#----- Model (2 internal knots)
+m1<-lm(y ~ bs(x, knots=xi[2:(length(xi)-1)], degree=3))
+
+###---- for graphical reasons select 200 points where to evaluate the model
+xxx<-seq(min(x),max(x),length=200)
+
+#Make predictions by using the 'xxx' points
+fit1<-predict(m1, data.frame(x=xxx))
+#########
+plot(x,y,xlab="engine size", ylab="distance")
+lines(xxx,fit1,col=2)
+
+######vertical plots to indicate the knots
+abline(v=xi[2], lty=3)
+abline(v=xi[3], lty=3)
+
+
+#-----
+#-----
+#we may select the knots by using the degrees of freedom
+#
+#basic functions b-spline for a cubic spline (degree=3)
+#df directly related to the number of knots
+#df=length(knots) + degree 
+#The knots are selected by using the quantiles of 'x' distribution 
+
+plot(x,y,xlab="engine size", ylab="distance")
+
+# first model with 2 internal knots
+m1<-lm(y~bs(x, df=5, degree=3)) 
+fit1<-predict(m1, data.frame(x=xxx))
+lines(xxx,fit1,col=4)
+#
+# second model with no internal knots 
+m2 <- lm(y ~ bs(x, df=3, degree=3)) 
+fit2<-predict(m2,data.frame(x=xxx))
+#plot(x,y,xlab="engine size", ylab="distance")
+lines(xxx,fit2,col=3)
+#
+# Third model with 17 knots 
+m3<-lm(y~bs(x,df=20,degree=3))
+fit3<-predict(m3,data.frame(x=xxx))
+#plot(x,y,xlab="engine size", ylab="distance")
+lines(xxx,fit3,col=2)
+#
+#
+#-----
+#Smoothing splines (no library required, default tool)
+
+plot(x,y,xlab="engine size", ylab="distance")
+s <- smooth.spline(x,y)
+lines(s)
+
+# Model 1
+plot(x,y,xlab="engine size", ylab="distance")
+s1 <- smooth.spline(x,y, lambda=0.0001)
+lines(s1)
+#
+p1<- predict(s1, x=xxx)
+lines(p1, col=2)
+#
+# Model 2
+s2 <- smooth.spline(x,y, lambda=0.00001)
+p2<- predict(s2, x=xxx)
+lines(p2, col=3)
+#
+# Model 3
+s3 <- smooth.spline(x,y, lambda=0.01)
+p3<- predict(s3, x=xxx)
+lines(p3, col=4)
+
+# Model 4
+s4 <- smooth.spline(x,y, lambda=1)
+p4<- predict(s4, x=xxx)
+lines(p4, col=4)
+
+# Model 5
+s5 <- smooth.spline(x,y, lambda=0.00000001)
+p5<- predict(s5, x=xxx)
+lines(p5, col=4)
+
+########################################
+######Generalized Additive Models#######
+########################################
+
+#######Quarterly international arrivals (in thousands) to Australia from Japan, New Zealand, UK and the US. 1981Q1 - 2012Q3
+library(fpp2)
+
+?arrivals
+autoplot(arrivals)
+autoplot(arrivals[,c(1,2)])
+
+Japan<- arrivals[,1]
+NZ<- arrivals[,2]
+UK<- arrivals[,3]
+US<- arrivals[,4]
+
+
+
+######Another way of performing the same linear regression
+
+tt<- (1:length(NZ))
+seas <- factor(c(rep(1:4,length(NZ)/4),1:3)) 
+#####1:3 because there are three observations 'out' 
+mod2 <- lm(NZ~ tt+seas+Japan)
+summary(mod2)
+AIC(mod2)
+
+#######we now try with a GAM
+library(gam)
+?s 
+
+#Values for df should be greater than 1, with df=1 implying a linear fit. Default is df=4
+g1 <- gam(NZ~s(tt)+seas+s(Japan))
+summary(g1)
+
+#######time and Japan have a nonlinear effect (always take care of interpretability!)
+
+par(mfrow=c(2,2))
+plot(g1, se=T)
+AIC(g1)
+
+
+####linear model may be also performed with library(gam)
+g0 <- gam(NZ~(tt)+seas+(Japan))
+summary(g0)
+par(mfrow=c(2,2))
+plot(g0, se=T)
+AIC(g0)
+
+####GAM with splines performs better###
+
+
+####try another option with loess (lo)
+g2<- gam(NZ~lo(tt)+seas+lo(Japan))
+summary(g2)
+par(mfrow=c(2,2))
+plot(g2, se=T)
+AIC(g2)
+
+
+#######perform analysis of residuals
+tsdisplay(residuals(g1))
+aar1<- auto.arima(residuals(g1))
+
+plot(as.numeric(NZ), type="l")
+lines(fitted(aar1)+ fitted(g1), col=4)
+
+
+
+######## 'Movies' Dataset- preliminary analysis
+
+data <- read.csv("C://Users/manoj/Downloads/movies.csv", stringsAsFactors=TRUE)
+str(data)
+#erase columns of indicator variables
+data<-data[,-c(1,2)]
+
+#transform variable release_date in format "data"
+data$release_date <- as.Date(data$release_date, "%d/%m/%Y")
+
+str(data)
+
+# Response variable
+summary(data$vote_average)
+#boxplot(data$vote_average, col="orange", ylim=c(0,10), main="Movies", ylab="Rating")
+#
+hist(data$vote_average, col="orange", main="Movies", xlab="Rating")
+#
+#explanatory variables
+summary(data)
+
+
+summary(data[,c(1,2,5,6)])
+par(mfrow=c(2,2))
+for(i in c(1,2,5,6)){
+  hist(data[,i], col="orange", main=paste(colnames(data)[i]), xlab="")
+}
+
+#transform quantitative variables in log scale
+data$budget <- log(data$budget)
+data$popularity <- log(data$popularity)
+data$revenue <- log(data$revenue)
+
+summary(data[,c(1,2,5,6)])
+
+par(mfrow=c(2,2))
+for(i in c(1,2,5,6)){
+  hist(data[,i], col="orange", main=paste(colnames(data)[i]), xlab="")
+}
+#go back to orginal panel 
+par(mfrow=c(1,1))
+
+#transform release_date in numeric 
+data$release_date<-as.numeric(data$release_date)
+summary(data$release_date)
+
+# Set train and test
+set.seed(1)
+train = sample (1:nrow(data), 0.7*nrow(data))
+data.train=data[train ,]
+data.test=data[-train ,]
+
+# make some variables factor
+data.train[,c(3,7, 10:24)]= lapply(data.train[,c(3,7, 10:24)],factor)
+data.test[,c(3,7, 10:24)]= lapply(data.test[,c(3,7, 10:24)],factor)
+
+str(data.train)
+
+####Linear Model----------------------
+
+m1 <- lm(vote_average~.-vote_classes, data=data.train)
+
+summary(m1)
+
+# Stepwise Regression
+m2 <- step(m1, direction="both")
+summary(m2)
+
+
+
+#Prediction
+p.lm <- predict(m2, newdata=data.test)
+dev.lm <- sum((p.lm-data.test$vote_average)^2)
+dev.lm
+
+AIC(m2)
+
+######################GAM--------
+
+library(gam)
+
+###################
+##Stepwise GAM
+#Start with a linear model (df=1)
+g3 <- gam(vote_average~.-vote_classes, data=data.train)
+
+#Show the linear effects 
+par(mfrow=c(3,5))
+plot(g3, se=T) 
+
+#Perform stepwise selection using gam scope
+#Values for df should be greater than 1, with df=1 implying a linear fit
+
+sc = gam.scope(data.train[,-8], response=8, arg=c("df=2","df=3","df=4"))
+g4<- step.Gam(g3, scope=sc, trace=T)
+summary(g4)
+
+AIC(g4)
+
+par(mfrow=c(3,5))
+plot(g4, se=T)
+
+# if we want to see better some plot
+par(mfrow=c(1,1))
+plot(g4, se=T, ask=T)
+
+
+#Prediction
+data.test[,c(3,7, 10:24)]= lapply(data.test[,c(3,7, 10:24)],factor)
+p.gam <- predict(g4,newdata=data.test)     
+dev.gam <- sum((p.gam-data.test$vote_average)^2)
+dev.gam
+
+
+
+
+
+
+
+
+par(mfrow=c(1, 1))
+
+plot(ts_data, col="black",type ='b', xlab = 'Time Series plot of Weekly Data',ylab="BTC price", pch=16, lty=3,cex=0.6)
+mtext("Day range from 09-02-2018 to 28-10-2022(1230 Days)", side=3, line=1)
+
+Pacf(ts_data)

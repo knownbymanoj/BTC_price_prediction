@@ -1,0 +1,6 @@
+"0","#pice <- btc.xts$Adjusted"
+"0",""
+"0","model = auto.arima(ts_data_train)"
+"0",""
+"0","res <- residuals(model)"
+"0","Acf(res)"

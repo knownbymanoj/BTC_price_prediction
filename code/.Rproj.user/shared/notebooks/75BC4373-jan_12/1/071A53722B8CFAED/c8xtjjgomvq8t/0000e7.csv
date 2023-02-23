@@ -1,0 +1,4 @@
+"0",""
+"0","#axis(1, at = seq(1,length(ts_data_train),by=20), labels=final_df$Date[seq(2,(1 + length(ts_data_train)),by=20)])"
+"0",""
+"0","lines(fitted(model),col=""blue"")"

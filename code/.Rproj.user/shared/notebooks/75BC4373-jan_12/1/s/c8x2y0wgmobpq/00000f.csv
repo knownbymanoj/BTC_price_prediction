@@ -1,0 +1,6 @@
+"0","# prediction"
+"0","pred_bmprices <- predict(bm_prices, newx = (1:275))"
+"0","pred.instprices <- make.instantaneous(pred_bmprices)"
+"0",""
+"0",""
+"0","plot(pred.instprices, col=2, xaxt=""n"", ylim = c(0,70000),pch=16, lty=3, cex=0.6, xlab=""Date"", ylab = ""Price"")"

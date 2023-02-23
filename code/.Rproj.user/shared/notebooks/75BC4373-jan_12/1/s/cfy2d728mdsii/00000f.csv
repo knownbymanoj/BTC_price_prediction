@@ -1,0 +1,8 @@
+"0","which(is.na(EMV_IDT))"
+"1","[1]"
+"1"," 1262"
+"1","
+"
+"0","EMV_IDT[is.na(EMV_IDT)] <- mean(EMV_IDT, na.rm = TRUE)"
+"0",""
+"0",""

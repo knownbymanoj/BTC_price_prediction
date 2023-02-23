@@ -1,0 +1,2 @@
+"0","pred_GGM_btc<- predict(GGM_btc, newx=1:length(subset1[1:275]))"
+"0","pred_GGM_btc.inst<- make.instantaneous(pred_GGM_btc)"

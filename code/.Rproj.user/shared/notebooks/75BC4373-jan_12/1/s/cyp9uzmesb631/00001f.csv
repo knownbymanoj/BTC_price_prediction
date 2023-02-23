@@ -1,0 +1,2 @@
+"0","# plotting time-series regression line"
+"0","ts.plot(ts_data, xlab=""Week"", ylab=""BTC price"", main=""Plotting time-series regression line of BTC prices over time"", col=2)"

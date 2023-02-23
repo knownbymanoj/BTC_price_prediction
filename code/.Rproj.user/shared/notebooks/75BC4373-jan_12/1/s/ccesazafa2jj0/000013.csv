@@ -1,0 +1,3 @@
+"0","#minimum error in test set"
+"0","best=which.min(err)"
+"0","abline(v=best, lty=2, col=4)"

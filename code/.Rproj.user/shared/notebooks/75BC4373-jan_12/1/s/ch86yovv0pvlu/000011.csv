@@ -1,0 +1,2 @@
+"0","plot(tail(adx, 100), type=""l"","
+"0","    main=""Average Directional Index "", ylab="""")"

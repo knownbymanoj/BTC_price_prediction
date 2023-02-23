@@ -1,0 +1,2 @@
+"0","EPU <- subset(EPU, EPU$Day!=""Sat"" & EPU$Day!=""Sun"")$USEPUINDXD"
+"0","EMU <- subset(EMU, EMU$Day!=""Sat"" & EMU$Day!=""Sun"")$WLEMUINDXD"

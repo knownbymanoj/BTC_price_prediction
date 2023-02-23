@@ -1,0 +1,4 @@
+"0",""
+"0","# residual analysis"
+"0","res_GMBr2btc <- residuals(GMBr2btc)"
+"0","plot(res_GMBr2btc, xlab='No. of Residuals', ylab= 'Error')"

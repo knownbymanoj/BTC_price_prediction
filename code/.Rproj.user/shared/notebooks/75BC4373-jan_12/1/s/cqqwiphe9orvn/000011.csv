@@ -1,0 +1,3 @@
+"0",""
+"0","plot(tail(stochOSC[,""fastK""], 100), type=""l"","
+"0","    main=""Fast %K "", ylab="""")"

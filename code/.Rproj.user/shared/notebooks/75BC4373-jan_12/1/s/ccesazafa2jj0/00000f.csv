@@ -1,0 +1,2 @@
+"0","# error comparison (train e test)"
+"0","plot(boost.model$train.error, type=""l"")"
